@@ -8,13 +8,36 @@ import { AddRestaurantDialog } from '@/components/dashboard/AddRestaurantDialog'
 import { SearchFilter } from '@/components/dashboard/SearchFilter';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Utensils, LogOut } from 'lucide-react';
+import { Utensils, LogOut, Mail, Loader2 } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 export default function Dashboard() {
   const { user, signOut, isAdmin } = useAuth();
   const { data: restaurants = [], isLoading, error } = useRestaurants();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [isSendingEmails, setIsSendingEmails] = useState(false);
+
+  const handleSendExpiryNotifications = async () => {
+    setIsSendingEmails(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('send-expiry-notification');
+      
+      if (error) throw error;
+      
+      if (data.processed === 0) {
+        toast.info('No restaurants with expiring subscriptions found');
+      } else {
+        toast.success(`Sent ${data.results.filter((r: any) => r.status === 'sent').length} notification emails`);
+      }
+    } catch (err: any) {
+      console.error('Error sending notifications:', err);
+      toast.error('Failed to send notifications: ' + err.message);
+    } finally {
+      setIsSendingEmails(false);
+    }
+  };
 
   const filteredRestaurants = useMemo(() => {
     return restaurants.filter((restaurant) => {
@@ -58,8 +81,21 @@ export default function Dashboard() {
               <p className="text-sm text-muted-foreground">Subscription Management</p>
             </div>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <span className="text-sm text-muted-foreground hidden sm:block">{user?.email}</span>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleSendExpiryNotifications}
+              disabled={isSendingEmails}
+            >
+              {isSendingEmails ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <Mail className="h-4 w-4 mr-2" />
+              )}
+              Send Expiry Alerts
+            </Button>
             <Button variant="outline" size="sm" onClick={signOut}>
               <LogOut className="h-4 w-4 mr-2" />
               Sign Out
