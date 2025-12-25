@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRestaurants, getRestaurantStatus } from '@/hooks/useRestaurants';
 import { StatsCards } from '@/components/dashboard/StatsCards';
+import { SubscriptionChart } from '@/components/dashboard/SubscriptionChart';
 import { RestaurantTable } from '@/components/dashboard/RestaurantTable';
 import { AddRestaurantDialog } from '@/components/dashboard/AddRestaurantDialog';
 import { SearchFilter } from '@/components/dashboard/SearchFilter';
@@ -77,7 +78,10 @@ export default function Dashboard() {
             ))}
           </div>
         ) : (
-          <StatsCards restaurants={restaurants} />
+          <>
+            <StatsCards restaurants={restaurants} />
+            <SubscriptionChart />
+          </>
         )}
 
         {/* Toolbar */}
