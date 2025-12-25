@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { format } from 'date-fns';
 import {
   Dialog,
   DialogContent,
@@ -26,6 +27,8 @@ export function EditRestaurantDialog({ restaurant, open, onOpenChange }: EditRes
     contact_email: '',
     contact_phone: '',
     notes: '',
+    trial_start: '',
+    supabase_project_id: '',
   });
   const updateRestaurant = useUpdateRestaurant();
   const { toast } = useToast();
@@ -38,6 +41,8 @@ export function EditRestaurantDialog({ restaurant, open, onOpenChange }: EditRes
         contact_email: restaurant.contact_email || '',
         contact_phone: restaurant.contact_phone || '',
         notes: restaurant.notes || '',
+        trial_start: restaurant.trial_start ? format(new Date(restaurant.trial_start), 'yyyy-MM-dd') : '',
+        supabase_project_id: restaurant.supabase_project_id || '',
       });
     }
   }, [restaurant]);
@@ -65,6 +70,8 @@ export function EditRestaurantDialog({ restaurant, open, onOpenChange }: EditRes
           contact_email: formData.contact_email.trim() || null,
           contact_phone: formData.contact_phone.trim() || null,
           notes: formData.notes.trim() || null,
+          trial_start: formData.trial_start || undefined,
+          supabase_project_id: formData.supabase_project_id.trim() || null,
         },
       });
       toast({
@@ -126,6 +133,24 @@ export function EditRestaurantDialog({ restaurant, open, onOpenChange }: EditRes
                 placeholder="+1 234 567 890"
               />
             </div>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="edit-trial-start">Trial Start Date</Label>
+            <Input
+              id="edit-trial-start"
+              type="date"
+              value={formData.trial_start}
+              onChange={(e) => setFormData({ ...formData, trial_start: e.target.value })}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="edit-supabase-id">Supabase Project ID (for linking)</Label>
+            <Input
+              id="edit-supabase-id"
+              value={formData.supabase_project_id}
+              onChange={(e) => setFormData({ ...formData, supabase_project_id: e.target.value })}
+              placeholder="e.g., bttirwdxislcsdpshgdj"
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="edit-notes">Notes</Label>

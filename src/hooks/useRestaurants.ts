@@ -111,6 +111,24 @@ export function useExtendSubscription() {
   });
 }
 
+export function useDeleteRestaurant() {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from('restaurants')
+        .delete()
+        .eq('id', id);
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['restaurants'] });
+    },
+  });
+}
+
 export function getRestaurantStatus(restaurant: Restaurant): 'trial' | 'active' | 'expiring' | 'expired' {
   const now = new Date();
   

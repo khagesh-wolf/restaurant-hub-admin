@@ -10,6 +10,7 @@ export type Restaurant = {
   is_active: boolean;
   notes: string | null;
   created_at: string;
+  supabase_project_id: string | null;
 };
 
 export type InsertRestaurant = {
@@ -24,6 +25,7 @@ export type InsertRestaurant = {
   is_active?: boolean;
   notes?: string | null;
   created_at?: string;
+  supabase_project_id?: string | null;
 };
 
 export type UpdateRestaurant = Partial<InsertRestaurant>;
