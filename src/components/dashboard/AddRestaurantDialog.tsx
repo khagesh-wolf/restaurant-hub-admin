@@ -22,6 +22,7 @@ export function AddRestaurantDialog() {
     contact_email: '',
     contact_phone: '',
     notes: '',
+    supabase_project_id: '',
   });
   const createRestaurant = useCreateRestaurant();
   const { toast } = useToast();
@@ -45,12 +46,13 @@ export function AddRestaurantDialog() {
         contact_email: formData.contact_email.trim() || null,
         contact_phone: formData.contact_phone.trim() || null,
         notes: formData.notes.trim() || null,
+        supabase_project_id: formData.supabase_project_id.trim() || null,
       });
       toast({
         title: 'Restaurant added',
         description: `${formData.name} has been added successfully.`,
       });
-      setFormData({ name: '', domain: '', contact_email: '', contact_phone: '', notes: '' });
+      setFormData({ name: '', domain: '', contact_email: '', contact_phone: '', notes: '', supabase_project_id: '' });
       setOpen(false);
     } catch (error) {
       toast({
@@ -112,6 +114,18 @@ export function AddRestaurantDialog() {
                 placeholder="+1 234 567 890"
               />
             </div>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="supabase_project_id">Supabase Project ID</Label>
+            <Input
+              id="supabase_project_id"
+              value={formData.supabase_project_id}
+              onChange={(e) => setFormData({ ...formData, supabase_project_id: e.target.value })}
+              placeholder="e.g., abcdefghijklmnop"
+            />
+            <p className="text-xs text-muted-foreground">
+              Link this restaurant to its Supabase project for subscription checks
+            </p>
           </div>
           <div className="space-y-2">
             <Label htmlFor="notes">Notes</Label>
